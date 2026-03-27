@@ -111,7 +111,28 @@ app.get('/api', function (req, res, next) {
 **常見誤解**
 - CORS 錯誤**只發生在瀏覽器**中，Postman 或 curl 不會出現
 - 這些工具發送的是頂層網路請求，不屬於跨源請求
-- CORS 設定在伺服器端，但由**客戶端（瀏覽器）決定是否遵守**
+- CORS 設定在伺服器端，但由**客戶端（瀏覽器）決定是否遵守
+- 所有跨源請求都需要後端在 response 帶上 Access-Control-Allow-Origin。而比較「危險」的請求（非安全方法、自訂 header 等），瀏覽器會多一步 Preflight 檢查，確認通過才發出實際請求，避免伺服器先執行了不該執行的操作。
+
+
+1. 所有跨源請求都需要後端設 CORS header
+不是只有 Preflight 才需要，簡單請求也需要。差別只是：
+
+簡單請求	Preflight 請求
+請求會不會發出去	會，直接發	先發 OPTIONS 問，通過才發
+後端沒設 CORS header	請求已經到伺服器並執行了，但瀏覽器擋住回應，JS 讀不到	OPTIONS 被拒，實際請求根本不會發
+這就是 Preflight 存在的意義 — 比較危險的操作（DELETE、PUT 等）不應該先執行再問，所以瀏覽器先用 OPTIONS 確認，沒通過就不發。
+
+2. 後端回的是 Access-Control-Allow-Origin，不是 Origin
+Origin → 是瀏覽器自動帶在 request 裡的，告訴伺服器「我從哪裡來」
+Access-Control-Allow-Origin → 是伺服器放在 response 裡的，告訴瀏覽器「我允許誰讀」
+
+瀏覽器 request:   Origin: https://my-app.com
+伺服器 response:  Access-Control-Allow-Origin: https://my-app.com
+
+↑ 兩邊匹配，瀏覽器才放行
+
+**
 
 ### 影片
 
