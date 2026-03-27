@@ -11,7 +11,30 @@ CDN (Content Delivery Network) delivers website assets from geographically close
 #### 1. CloudFlare - What is a CDN? | How do CDNs work?
 > 原文：[https://www.cloudflare.com/en-ca/learning/cdn/what-is-a-cdn/](https://www.cloudflare.com/en-ca/learning/cdn/what-is-a-cdn/)
 
-⚠️ 此網站無法訪問
+**什麼是 CDN（Content Delivery Network）**
+
+CDN 是地理上分散的伺服器群組，將內容快取在靠近終端用戶的位置。CDN 讓 HTML、JavaScript、樣式表、圖片和影片等資源能夠快速傳輸。今天大多數 Web 流量都通過 CDN 提供，包括 Facebook、Netflix、Amazon 等主要網站。
+
+**四大主要優勢**
+
+| 優勢 | 說明 |
+|------|------|
+| **縮短載入時間** | 將內容分發到更近的 CDN 伺服器，訪客體驗更快的頁面載入 |
+| **降低頻寬成本** | 透過快取減少源站需提供的資料量，降低託管成本 |
+| **提高可用性與冗餘** | 分散式特性讓 CDN 能處理更大流量，抵禦硬體故障 |
+| **增強安全性** | 提供 DDoS 緩解、改善 TLS/SSL 憑證管理等安全優化 |
+
+**運作機制**
+
+CDN 在不同網路之間的交換點（IXP）放置伺服器，降低傳輸成本與時間。
+
+1. **快取（Caching）**：在全球戰略位置的資料中心快取靜態內容
+2. **動態加速**：負載均衡、SSD 等硬體/軟體優化；檔案壓縮減少傳輸量
+3. **可靠性**：Anycast 路由在資料中心故障時自動轉移流量；智慧故障轉移確保服務不中斷
+
+**CDN vs Web 主機**
+
+CDN 不託管內容，無法取代 Web 主機。它在網路邊緣快取內容，改善效能。Web 主機儲存原始檔案，CDN 讓這些檔案對全球用戶更易存取。
 
 ---
 

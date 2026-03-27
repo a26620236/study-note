@@ -10,15 +10,36 @@ Server-side caching improves performance by storing frequently accessed data in 
 
 #### 1. Server-side caching and Client-side caching
 > 原文：[https://www.codingninjas.com/codestudio/library/server-side-caching-and-client-side-caching](https://www.codingninjas.com/codestudio/library/server-side-caching-and-client-side-caching)
-
-⚠️ 此網站重定向到其他域名
+> （原 URL 已永久重定向至 https://www.naukri.com/code360/library/server-side-caching-and-client-side-caching，頁面需 JavaScript 渲染，無法讀取）
 
 ---
 
 #### 2. Caching strategies
 > 原文：[https://medium.com/@genchilu/cache-strategy-in-backend-d0baaacd2d79](https://medium.com/@genchilu/cache-strategy-in-backend-d0baaacd2d79)
 
-⚠️ 此網站無法訪問（403 Forbidden）
+**快取容量規劃（80/20 法則）**
+
+快取遵循 80/20 法則：約 20% 的物件佔 80% 的訪問量。例如 1000 萬日活用戶、每位用戶 500KB 元數據，快取最熱的 20% 需約 100GB 儲存空間。
+
+**快取叢集（Cache Clustering）**
+
+當單一 VM 無法容納快取需求時，需要分散式叢集。簡單的模數雜湊在擴容時會導致大量資料重新映射；**Consistent Hashing（一致性雜湊）** 可在新增/移除節點時最小化資料遷移量。
+
+**替換策略（Replacement Policies）**
+
+| 策略 | 說明 |
+|------|------|
+| **FIFO** | 丟棄最舊的快取項目 |
+| **LFU** | 移除訪問頻率最低的項目 |
+| **LRU** | 移除最近最少使用的項目（最常見） |
+
+**更新策略（Update Policies）**
+
+| 策略 | 機制 | 權衡 |
+|------|------|------|
+| **Write-through（寫穿）** | 同時更新 DB 和快取 | 強一致性；寫入延遲較高 |
+| **Write-around（寫繞）** | 只更新 DB；快取失效 | 首次讀取必然 cache miss |
+| **Write-back（寫回）** | 先更新快取，延遲寫入 DB | 吞吐量高；有資料丟失風險 |
 
 ---
 

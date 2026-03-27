@@ -55,7 +55,22 @@ Caching 是一個高速資料儲存層，用來保存常用資料的子集合，
 #### 2. Caching - Cloudflare
 > 原文：[https://www.cloudflare.com/learning/cdn/what-is-caching/](https://www.cloudflare.com/learning/cdn/what-is-caching/)
 
-⚠️ 此網站無法訪問
+**什麼是 Caching（快取）**
+
+Caching 是將檔案副本儲存在快取（臨時儲存位置）的過程，以便更快地存取。技術上，快取是任何臨時儲存檔案或資料副本的位置。Web 瀏覽器快取 HTML、JavaScript 和圖片以加快網站載入速度；DNS 伺服器快取 DNS 記錄以加速查詢；CDN 伺服器快取內容以降低延遲。
+
+**瀏覽器快取**
+
+每次用戶載入網頁，瀏覽器需下載大量資料。為縮短載入時間，瀏覽器快取大部分網頁內容，儲存在設備硬碟上。TTL（Time to Live）控制內容被快取的時間；TTL 到期或硬碟快取滿時，快取內容被清除。
+
+**CDN 快取**
+
+CDN 在更靠近終端用戶的代理伺服器（PoP）上快取內容。當用戶請求內容時，CDN 從源站獲取後保存副本，後續請求直接從快取提供（Cache Hit）。若快取中無請求內容則為 Cache Miss，CDN 伺服器會向源站請求並快取結果。
+
+**其他快取類型**
+
+- **DNS 快取**：DNS 伺服器儲存最近的查詢結果，無需再次查詢名稱伺服器即可回應
+- **搜尋引擎快取**：快取常出現在搜尋結果中的網頁，即使網站暫時無法訪問也能回應查詢
 
 ---
 

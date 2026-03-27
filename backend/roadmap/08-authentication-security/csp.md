@@ -69,9 +69,44 @@ Content-Security-Policy-Report-Only: policy
 ---
 
 #### 2. Google Devs — Content Security Policy (CSP)
-> 原文：[https://developers.google.com/web/fundamentals/security/csp](https://developers.google.com/web/fundamentals/security/csp)
+> 原文：[https://developers.google.com/web/fundamentals/security/csp](https://developers.google.com/web/fundamentals/security/csp)（已重定向至 https://web.dev/articles/csp）
 
-⚠️ 此網站重定向到 web.dev（未單獨整理）
+**CSP 的核心概念（web.dev 版）**
+
+CSP 能「顯著降低現代瀏覽器中 XSS 攻擊的風險和影響」。Web 安全模型基於同源策略，但 XSS 攻擊通過注入惡意代碼繞過它。CSP 要求瀏覽器只執行/渲染來自明確批准來源的資源。
+
+**HTTP Header 語法**
+
+```http
+Content-Security-Policy: directive source1 source2; directive2 source3
+```
+
+**主要指令（Directives）**
+
+| 指令 | 控制範圍 |
+|------|---------|
+| `script-src` | JavaScript 執行來源 |
+| `style-src` | CSS 樣式表來源 |
+| `img-src` | 圖片來源 |
+| `connect-src` | XHR、WebSocket、EventSource 連接 |
+| `default-src` | 未指定指令的預設值 |
+| `sandbox` | 應用類 iframe 的限制到頁面行為 |
+| `report-uri` | 違規報告發送端點 |
+
+**關鍵安全要求**
+
+**內聯代碼限制**：CSP 預設禁止內聯腳本和樣式。開發者需將代碼移至外部文件，並將 event handler 改為 `addEventListener()`
+
+**防止 eval**：`eval()`、`setTimeout([string])`、`setInterval([string])` 等函數被封鎖。應使用 `JSON.parse()` 替代 eval，並傳遞函數而非字串給計時函數
+
+**允許的關鍵字**
+
+- `'self'`：只允許當前來源
+- `'none'`：不允許任何來源
+- `'unsafe-inline'`：允許內聯代碼（有安全風險）
+- `'unsafe-eval'`：允許動態代碼執行
+
+**部署策略**：先使用 `Content-Security-Policy-Report-Only` header 在報告模式下監控違規，驗證策略後再切換為強制執行模式
 
 ### 影片
 

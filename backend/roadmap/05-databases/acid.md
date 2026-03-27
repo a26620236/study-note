@@ -45,9 +45,56 @@ NoSQL 資料庫採用較寬鬆的 BASE 標準：
 ---
 
 #### 2. What is ACID Compliance?: Atomicity, Consistency, Isolation
-> 原文：https://fauna.com/blog/what-is-acid-compliance-atomicity-consistency-isolation
+> 原文：https://fauna.com/blog/what-is-acid-compliance-atomicity-consistency-isolation（Fauna 公司已於 2024 年關閉，此 URL 永久失效）
 
-⚠️ 此網站無法訪問（ECONNREFUSED）
+**ACID 合規性的重要性**
+
+ACID 合規性是評估資料庫可靠性的關鍵標準，對於金融、電商等需要資料精確性的應用至關重要。
+
+**四大特性深入解析**
+
+**Atomicity（原子性）**
+
+事務中所有操作要麼全部成功，要麼全部回滾，絕無中間狀態。
+
+```
+範例：銀行轉帳
+  借方帳戶 -$100   ←  若任一步驟失敗
+  貸方帳戶 +$100   ←  整個事務皆回滾
+```
+
+**Consistency（一致性）**
+
+每次事務執行後，資料庫必須保持在一個合法的狀態，不違反任何預定義的規則（約束、觸發器、cascade 規則）。
+
+- 帳戶餘額不可為負數
+- 外鍵關係保持完整性
+- 唯一性約束不被破壞
+
+**Isolation（隔離性）**
+
+並行執行的事務互不干擾，每個事務看到的資料就如同沒有其他事務在同時執行。
+
+| 隔離問題 | 說明 |
+|---------|------|
+| **Dirty Read** | 讀取到其他事務未提交的資料 |
+| **Non-Repeatable Read** | 同一事務內兩次讀取結果不同 |
+| **Phantom Read** | 同一事務內查詢結果集出現新增或刪除的行 |
+
+**Durability（持久性）**
+
+事務一旦提交，其結果永久保存，即使系統崩潰也不會丟失。通常通過寫入日誌（Write-Ahead Log, WAL）和持久化儲存來實現。
+
+**ACID vs BASE**
+
+現代分散式系統有時採用 BASE 模型（放寬 ACID 限制以換取可擴展性）：
+
+| | ACID | BASE |
+|-|------|------|
+| **一致性** | 強一致性 | 最終一致性 |
+| **可用性** | 相對較低 | 高可用 |
+| **適用場景** | 金融、醫療等關鍵系統 | 社交媒體、內容分發 |
+| **代表資料庫** | PostgreSQL、MySQL | Cassandra、DynamoDB |
 
 ---
 

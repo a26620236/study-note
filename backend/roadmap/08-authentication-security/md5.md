@@ -11,14 +11,30 @@ MD5 (Message-Digest Algorithm 5) produces 128-bit hash values as 32-character he
 #### 1. Wikipedia - MD5
 > 原文：[https://en.wikipedia.org/wiki/MD5](https://en.wikipedia.org/wiki/MD5)
 
-⚠️ 此網站無法訪問（403 Forbidden）
+**MD5 的定義與運作**
+
+MD5（Message-Digest Algorithm 5）是由 Ronald Rivest 於 1991 年設計的密碼學雜湊函數，1992 年作為 RFC 1321 正式規範。它將任意長度的訊息處理成固定的 **128 位元** 雜湊值，以 **32 個十六進位字符** 表示。
+
+**算法流程**：訊息切割為 512 位元區塊 → 經過 4 輪共 16 次操作（使用非線性函數、模數加法和位元旋轉）→ 輸出 128 位元 hash
+
+**安全漏洞**
+
+| 漏洞類型 | 說明 |
+|---------|------|
+| **碰撞攻擊** | 2004 年研究證明 MD5 不具碰撞抵抗性；2.6 GHz 電腦可在數秒內找到碰撞 |
+| **單區塊碰撞** | 2010 年實現；現代 GPU 每秒可計算數百萬次雜湊 |
+| **實際利用** | 2008 年：研究者利用 MD5 碰撞偽造 X.509 憑證；2012 年：Flame 惡意軟件利用 MD5 弱點偽造數位簽名 |
+
+**現況**
+
+2008 年，CMU 軟體工程研究所結論：MD5「在密碼學上已損壞，不適合繼續使用」。美國政府應用現已要求使用 SHA-2 家族算法。儘管如此，截至 2019 年 MD5 仍廣泛用於非密碼學應用（如內容管理系統的密碼雜湊）。
 
 ---
 
 #### 2. What is MD5?
 > 原文：[https://www.techtarget.com/searchsecurity/definition/MD5](https://www.techtarget.com/searchsecurity/definition/MD5)
 
-⚠️ 此網站無法訪問
+（此網站需 JavaScript 渲染，瀏覽器存取被拒絕，無法讀取內容）
 
 ---
 
