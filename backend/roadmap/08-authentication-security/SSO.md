@@ -81,6 +81,99 @@ SSO 的基礎是 **SP 與 IdP 之間的預先建立信任**，通常透過：
 7. SP 驗證 Token/Assertion
 8. 使用者獲得存取權限
 
+#### SP-Initiated 在不同協議下的差異
+
+同樣是 SP-Initiated，SAML 和 OIDC 的實作方式不同：
+
+```
+【SP-Initiated + SAML 詳細流程】
+
+1. User → SP: GET https://mail.company.com/inbox
+   （請求受保護資源 — 任何需要登入才能看的頁面）
+
+2. SP → User: 302 Redirect to IdP
+   Location: https://idp.company.com/sso?SAMLRequest=PHNhbWxwOk...
+   │
+   │  SAMLRequest 是一段 Base64 編碼的 XML
+   │
+   │  XML（eXtensible Markup Language）是一種標記語言，用標籤（tag）描述結構化資料
+   │  長得像 HTML，但標籤名稱可以自定義，用途是資料交換而非頁面呈現
+   │  SAML 誕生於 2000 年代初期，當時 XML 是主流資料格式（現在多用 JSON）
+   │
+   │  解碼後長這樣：
+   │  <samlp:AuthnRequest
+   │    ID="_abc123"
+   │    Destination="https://idp.company.com/sso"
+   │    AssertionConsumerServiceURL="https://mail.company.com/acs"  ← SP 的回調地址
+   │    Issuer="https://mail.company.com">                         ← 我是誰
+   │  </samlp:AuthnRequest>
+   │
+   │  作用：告訴 IdP「mail.company.com 請求你幫我認證這個使用者，認完請回傳到 /acs」
+
+3. User → IdP: 瀏覽器被 redirect 到 IdP 登入頁面，使用者輸入帳密
+
+4. IdP → User: 回應一個 HTML 頁面（不是 redirect！）
+   │
+   │  為什麼用 HTML Form 而不是 302 Redirect？
+   │  → SAMLResponse 的 XML 內容很大（包含簽章），超過 URL 長度限制
+   │  → 所以用 POST 而不是 GET，資料放在 form body 裡
+   │
+   │  IdP 回傳的 HTML 長這樣：
+   │  <html>
+   │    <body onload="document.forms[0].submit()">     ← 頁面載入自動 submit
+   │      <form method="POST" action="https://mail.company.com/acs">
+   │        <input type="hidden" name="SAMLResponse" value="PHNhbWxw..." />
+   │      </form>
+   │    </body>
+   │  </html>
+   │
+   │  使用者的瀏覽器收到這個 HTML → 自動 submit form → POST 到 SP
+   │  （整個過程使用者看不到，一瞬間就跳轉了）
+
+5. User → SP: POST https://mail.company.com/acs  (body: SAMLResponse=PHNhbWxw...)
+   │
+   │  SAMLResponse 解碼後是 XML Assertion：
+   │  <saml:Assertion>
+   │    <saml:Issuer>https://idp.company.com</saml:Issuer>
+   │    <ds:Signature>...</ds:Signature>           ← IdP 用私鑰簽的數位簽章
+   │    <saml:Subject>
+   │      <saml:NameID>user@company.com</saml:NameID>  ← 使用者身份
+   │    </saml:Subject>
+   │    <saml:Conditions NotOnOrAfter="2026-04-08T12:00:00Z"/>  ← 過期時間
+   │    <saml:AttributeStatement>
+   │      <saml:Attribute Name="role"><saml:AttributeValue>admin</...>
+   │    </saml:AttributeStatement>
+   │  </saml:Assertion>
+
+6. SP: 用 IdP 的公鑰驗證 XML 簽章 → 解析使用者身份 → 建立 Session
+
+特點：全程透過瀏覽器 redirect/POST，沒有 SP↔IdP 的後端直連
+      IdP 和 SP 之間不需要網路能互通，只要使用者的瀏覽器能連到兩邊就行
+```
+
+```
+【SP-Initiated + OIDC Authorization Code Flow】
+
+User → SP: 請求受保護資源
+SP → User: 302 Redirect to IdP /authorize（帶 client_id、scope）
+User → IdP: 登入
+IdP → User: 302 Redirect to SP /callback?code=xxx
+SP → IdP: POST /token（後端帶 code + client_secret 換 token）  ← 後端直連
+IdP → SP: { id_token (JWT), access_token, refresh_token }
+SP: 驗證 JWT 簽章 → 建立 Session
+
+特點：多一步後端 server-to-server 換 token，更安全（secret 不經過瀏覽器）
+```
+
+**關鍵差異：**
+
+| | SAML | OIDC AuthCode |
+|---|---|---|
+| **Token 傳遞** | 透過瀏覽器 POST（前端） | 後端 server-to-server |
+| **Token 格式** | XML Assertion | JWT |
+| **安全機制** | XML 數位簽章 | JWT 簽章 + client_secret 後端傳輸 |
+| **SP 需要** | IdP 的公鑰（驗 XML 簽章） | client_secret + IdP 公鑰（驗 JWT） |
+
 ### 2.2 IdP-Initiated SSO
 
 使用者先登入 IdP（如企業入口），再從中選擇要訪問的服務：
@@ -176,6 +269,59 @@ IdP → SP: { id_token, access_token, refresh_token }
 
 SP: 驗證 id_token → 建立 Session
 ```
+
+#### id_token 本質是 JWT
+
+```
+eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLC...}.SflKxwRJSMeKKF2QT4fw...
+ ─────── header ───────  ──────────────── payload ────────────────────────────  ── signature ──
+```
+
+| 部分 | 內容 |
+|------|------|
+| **Header** | 演算法（如 RS256）、token 類型（JWT） |
+| **Payload** | Claims — 使用者身份與驗證資訊（見下方） |
+| **Signature** | 用 IdP 私鑰對 header + payload 的簽章 |
+
+**Payload 常見 Claims：**
+
+| Claim | 說明 | 範例 |
+|-------|------|------|
+| `iss` | 簽發者 | `https://accounts.google.com` |
+| `sub` | 使用者唯一識別碼 | `110169484474386276334` |
+| `aud` | 目標受眾（SP 的 client_id） | `your-app.apps.googleusercontent.com` |
+| `exp` | 過期時間（Unix timestamp） | `1712600000` |
+| `iat` | 簽發時間 | `1712596400` |
+| `nonce` | 防 replay attack 的隨機值 | `abc123xyz` |
+| `name` | 使用者名稱 | `王小明` |
+| `email` | 使用者信箱 | `user@gmail.com` |
+
+#### id_token 驗證機制
+
+SP 驗證流程：
+
+```
+SP 收到 id_token (JWT)
+  │
+  ├─ 1. 從 IdP 的 JWKS endpoint 拿公鑰
+  │     （例如 Google: accounts.google.com/.well-known/openid-configuration → jwks_uri）
+  │
+  ├─ 2. 用公鑰驗簽章 → 確認是 IdP 發的、沒被竄改
+  │
+  ├─ 3. 驗證 JWT Claims：
+  │     ├─ iss (issuer)    → 必須等於預期的 IdP URL
+  │     ├─ aud (audience)  → 必須包含自己的 client_id
+  │     ├─ exp (expiration)→ 必須尚未過期
+  │     ├─ iat (issued at) → 簽發時間不應太久以前
+  │     └─ nonce           → 與 auth request 的 nonce 一致（防 replay attack）
+  │
+  └─ 全部通過 → 信任 sub claim（用戶身份）→ 建立 Session
+```
+
+> **JWKS 公鑰哪裡來？**
+> 每個 OIDC IdP 都會公開 Discovery endpoint（`/.well-known/openid-configuration`），
+> 裡面的 `jwks_uri` 指向公鑰位置。SP 的 OIDC library 會自動抓取，
+> 開發者在 IdP 後台（如 Google Cloud Console）只需設定 `client_id` / `client_secret`。
 
 ### 3.4 CAS（Central Authentication Service）
 
