@@ -229,3 +229,6 @@ git revert <A' 的 commit hash>   # revert the revert
 這是 Git 經典的 **"revert of a merge"** 陷阱。
 
 test123
+
+
+new code
