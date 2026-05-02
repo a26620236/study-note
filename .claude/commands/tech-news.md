@@ -24,11 +24,8 @@ description: 抓取當日軟體開發相關熱門科技新聞，分類為前端 
 | GitHub Trending | https://github.com/trending?since=daily | 開源專案 / 工具 |
 | Frontend Masters Blog | https://frontendmasters.com/blog | React / Next / TS / JS / CSS 深度文 |
 | dev.to | https://dev.to/top/week | 前端 / AI 工具使用心得 |
-| iThome 軟體開發 | https://www.ithome.com.tw| 中文社群觀點 |
-| Claude Code Releases | https://github.com/anthropics/claude-code/releases | Claude Code 更新與功能 |
 | Anthropic Engineering | https://www.anthropic.com/engineering | Claude 實作與工程實踐（非研究） |
 | Anthropic News | https://www.anthropic.com/news | 僅取產品 / 工具 / Claude Code 公告（過濾掉純研究與模型發布） |
-| OpenAI Blog | https://openai.com/news | 僅取產品 / 工具 / API 更新（過濾掉純研究與模型發布） |
 | Google DeepMind Blog | https://deepmind.google/discover/blog | 僅取產品 / 開發者工具（過濾掉純研究與模型發布） |
 
 #### 每週來源（**僅週六或週日執行時**才納入；平日跳過）
@@ -143,11 +140,11 @@ description: 抓取當日軟體開發相關熱門科技新聞，分類為前端 
 #### 格式
 
 ```markdown
-## Glossary / 專業術語補充
+## Glossary
 
 - **Server Components**
   - React components that render on the server and stream HTML + minimal JS to the client.
-  - 在伺服器端 render 的 React 元件，串流 HTML 加最少 JS 給瀏覽器，減少前端 bundle。
+  - *在伺服器端 render 的 React 元件，串流 HTML 加最少 JS 給瀏覽器，減少前端 bundle。*
 - **MCP (Model Context Protocol)**
   - An open protocol that standardizes how LLM agents call external tools and data sources.
   - 標準化 LLM agent 如何呼叫外部工具與資料來源的開放協議。
@@ -156,41 +153,43 @@ description: 抓取當日軟體開發相關熱門科技新聞，分類為前端 
 ### 7. 最終檔案結構
 
 ```markdown
-# Tech News YYYY-MM-DD (Day) / 科技新聞摘要 YYYY-MM-DD（星期X）
+# Tech News YYYY-MM-DD (Day)
 
-> Sources / 來源：Hacker News、GitHub Trending、Frontend Masters、Claude Code Releases（共 N 則）
-> Mode / 模式：Daily（平日）or Daily + Weekly（週末）
+> Sources: Hacker News、GitHub Trending、Frontend Masters、Claude Code Releases（N stories）
+> Mode: Daily or Daily + Weekly
 
-## TL;DR / 今日重點
+## Today's Highlights
 
 - One-line takeaway 1
-- 一句話重點 1
 - One-line takeaway 2
+- ...（5–7 points）
+-------
+- 一句話重點 1
 - 一句話重點 2
 - ...（共 5–7 點）
 
-## AI / AI 相關技術
+## AI
 
 ### [標題雙語]
 ...
 
-## Frontend / 前端技術
+## Frontend
 
 ...
 
-## Backend / 後端技術
+## Backend
 
 ...
 
-## DevOps & Cloud / DevOps 雲端
+## DevOps & Cloud
 
 ...
 
-## Others / 其他
+## Others
 
 ...
 
-## Glossary / 專業術語補充
+## Glossary
 
 ...
 ```
