@@ -87,17 +87,22 @@ description: 抓取當日軟體開發相關熱門科技新聞，分類為前端 
 - **DevOps / 雲端**：K8s、CI/CD、IaC、雲服務、監控、成本優化
 - **其他**：開源治理、社群事件、資安事件、職涯趨勢
 
-### 5. 撰寫每則摘要（雙語對照格式）
+### 5. 撰寫每則摘要（雙語區塊對照格式）
 
-採用 **Immersive Translate 風格**：原文（英文或中文）一行，緊接著對照翻譯一行。
+採用 **區塊對照格式**：在同一個內容區塊內，**所有英文 bullet 先列完**，用 `-------` 分隔線（前後不空行）隔開，**再列所有中文 bullet**。**不是**一行英文接一行中文的交替格式。
 
-#### 規則
+#### 適用範圍
 
-- **英文原文新聞** → 英文一行 + 繁體中文翻譯一行
-- **中文原文新聞** → 繁體中文一行 + 英文翻譯一行
-- 每組「原文 / 翻譯」之間不空行；不同組之間空一行
+- **Today's Highlights**：所有英文 bullet 先列完 → `-------` → 所有中文 bullet
+- **新聞內文**（Core / Impact / Details 等小節）：先列全部英文 bullet → `-------` → 再列全部中文 bullet
+- **小標題**（`###` 那行）：維持一行英文標題、一行中文標題（讓讀者一眼看到雙語標題）
+- **大標題區塊**（`#` 標題、Sources、Mode 那幾行）：**純英文**，不加中文翻譯
+- **Glossary**：**例外**，不用 `-------` 分隔線；每個詞條直接 EN 定義接 ZH 定義（連續兩行）
+
+#### 翻譯原則
+
 - 翻譯不逐字直譯，要符合中文／英文母語者的表達習慣
-- 標題也雙語
+- 中文原文新聞（如 iThome、掘金）→ 中文 bullet 在前、`-------`、英文 bullet 在後
 
 #### 格式範本
 
@@ -107,23 +112,26 @@ description: 抓取當日軟體開發相關熱門科技新聞，分類為前端 
 
 [原文連結](url)
 
-- **Core / 核心**
+- **Core**
   - React 19 RC marks Server Components as stable, no longer experimental.
-  - React 19 RC 將 Server Components 標記為穩定版，不再是實驗性功能。
-- **Impact / 影響**
+  - The new `use()` hook lets you read promises during render.
+- **Impact**
   - Framework authors like Next.js and Remix can ship without "experimental" warnings.
+-------
+- **核心**
+  - React 19 RC 將 Server Components 標記為穩定版，不再是實驗性功能。
+  - 新增 `use()` hook 可在 render 中讀取 promise。
+- **影響**
   - Next.js、Remix 等框架作者可以不再帶著「實驗性」警告出貨。
-- **Details / 細節**
-  - New `use()` hook for reading promises during render; concurrent features stabilized.
-  - 新增 `use()` hook 可在 render 中讀取 promise；並行 (concurrent) 功能穩定化。
 ```
 
 #### 撰寫原則
 
 - 每則保持 3–5 個 bullet 點；不要為了補滿欄位寫無意義內容
-- 沒有具體數據／細節時，直接省略 **Details / 細節** 那一組
+- 沒有具體數據／細節時，直接省略對應小節
 - 只寫對「軟體工程師日常工作」有用的訊息，行銷話術一律刪
 - 不要加 emoji
+- 小節標題（**Core**、**Impact**、**Details** 等）在英文區塊用英文、中文區塊用中文；不要寫成 `Core / 核心` 的斜線併排
 
 ### 6. 專業術語補充
 
