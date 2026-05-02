@@ -1,0 +1,10 @@
+{
+  "model_size": "small",
+  "language": null,
+  "device": "auto",
+  "compute_type": "auto",
+  "sample_rate": 16000,
+  "hotkey": "<ctrl>+<alt>+<space>",
+  "min_recording_seconds": 0.3,
+  "paste_after_transcribe": true
+}
