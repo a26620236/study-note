@@ -15,9 +15,27 @@ if ! brew list portaudio >/dev/null 2>&1; then
   brew install portaudio
 fi
 
+PY=""
+for candidate in python3.13 python3.12 python3.11 python3.10 python3; do
+  if command -v "$candidate" >/dev/null 2>&1; then
+    ver=$("$candidate" -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+    major=${ver%.*}
+    minor=${ver#*.}
+    if [ "$major" -ge 3 ] && [ "$minor" -ge 10 ]; then
+      PY="$candidate"
+      break
+    fi
+  fi
+done
+
+if [ -z "$PY" ]; then
+  echo "Need Python 3.10+. Install with: brew install python@3.13" >&2
+  exit 1
+fi
+
 if [ ! -d venv ]; then
-  echo "[setup] creating virtualenv..."
-  python3 -m venv venv
+  echo "[setup] creating virtualenv with $PY ($($PY --version))..."
+  "$PY" -m venv venv
 fi
 
 # shellcheck source=/dev/null

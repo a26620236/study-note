@@ -1,10 +1,17 @@
 {
+  "engine": "auto",
   "model_size": "small",
   "language": null,
   "device": "auto",
   "compute_type": "auto",
   "sample_rate": 16000,
   "hotkey": "<ctrl>+<alt>+<space>",
+  "hotkey_mode": "push-to-talk",
+  "hotkeys": null,
+  "max_recording_seconds": 60,
   "min_recording_seconds": 0.3,
-  "paste_after_transcribe": true
+  "paste_after_transcribe": true,
+  "english_log": false,
+  "english_log_dir": null,
+  "tray_enabled": true
 }
