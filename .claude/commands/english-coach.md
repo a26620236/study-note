@@ -30,6 +30,11 @@ description: 英文工作對話練習教練。模擬前端工程師外商工作�
 - `daily-standup` — 站會：昨日做了、今日要做、有無 blocker
 - `code-review-receiving` — 收到 reviewer 的批評，要回應 + 適度 push back
 - `code-review-giving` — 給別人 PR review，建議改動但不冒犯
+- `oss-issue-discussion` — 開源：在 issue 討論 bug repro / feature 想法，跟 maintainer 對齊解法再決定要不要開 PR
+- `oss-pr-first-contribution` — 開源：首次 PR 給陌生專案，寫 description（What/Why/How/Test）+ 自我介紹 + 回應 maintainer 第一輪 review
+- `oss-pr-iteration` — 開源：maintainer 要求架構改動 / squash commits / 加測試 / 改 API 設計，要回應 + 適度 push back（陌生人之間的 push back 更難）
+- `oss-stale-followup` — 開源：PR / issue 卡很久沒回應，禮貌 ping 又不顯得催促或冒犯
+- `oss-rfc-proposal` — 開源：提 RFC、breaking change 或大型 feature，跟 core team 討論 trade-off 與 migration path
 - `pm-spec-discussion` — 跟 PM 討論需求、提出 edge case 與技術可行性
 - `bug-debug-with-qa` — 跟 QA 一起 reproduce bug，描述步驟與假設
 - `1on1-manager` — 跟主管 1:1，談 career growth、要 feedback、提需求
@@ -350,6 +355,31 @@ python ".claude/skills/english-coach/audio_edge.py" "<session>" \
 - session 檔的 `## Polished Dialogue` 區塊**必須**只有 `[Speaker]: text` 格式行，且每句英文後緊接 `[中]: 中文翻譯` — 否則 TTS 中英對照會錯位
 - 中文翻譯要**口語化**、不要太書面（口語 listening 才有用）。技術詞如 PR、API、auth flow、bug 等保留英文不翻
 - 中文用**繁體中文**，符合使用者語言環境
+
+### 開源（`oss-*`）場景的特殊指引
+
+跑 `oss-*` 場景時，教練要額外強調這些開源社群的慣例（內部 PR 不適用）：
+
+- **語氣**：humble + grateful + low-pressure。maintainer 多半是無償付出的志工，不能用 demanding 或 entitled 的語氣
+- **必背禮貌句型**（Polished / Alternative / Phrase to bank 出現時優先用）：
+  - 開場：`"Hey maintainers, thanks for this awesome project!"` / `"First-time contributor here — happy to be corrected on conventions."`
+  - 提案：`"Would you be open to a PR that ...?"` / `"Before I open a PR, I wanted to check if this direction makes sense."`
+  - 回應 review：`"Good catch, fixed in the latest commit."` / `"Happy to iterate on this."` / `"Let me know if you'd prefer a different approach."`
+  - Push back：`"I see your point. One concern with that approach is ... — what do you think?"`（避免 `"I disagree"` 太直接）
+  - Stale follow-up：`"Just a gentle bump on this — no rush, but wanted to make sure it didn't fall through the cracks."`
+  - 撤回：`"Totally understand if this isn't a fit for the project. Thanks for taking a look!"`
+- **必避免**：
+  - `"Please merge this ASAP"`（pressure）
+  - `"Why hasn't anyone reviewed this?"`（entitled）
+  - `"This is clearly a bug"`（如果是 unclear 的話會顯得 dismissive）
+  - 中式「請」字直翻成 `"Please ..."` 開頭命令句（聽起來像下指令）
+- **PR description 結構**（`oss-pr-first-contribution` / `oss-rfc-proposal` 場景內必教）：
+  1. What this PR does（一句話）
+  2. Why（motivation / use case / linked issue）
+  3. How（approach + alternatives considered）
+  4. Testing（怎麼測的）
+  5. Open questions / Notes for reviewer
+- **README / CONTRIBUTING 慣例**：跑場景時可假設 maintainer 會引用 contributing guide，使用者要學會回 `"Sorry, missed that in CONTRIBUTING — updated."`
 
 ## 使用方式
 

@@ -27,6 +27,7 @@ description: 抓取當日軟體開發相關熱門科技新聞，分類為前端 
 | Anthropic Engineering | https://www.anthropic.com/engineering | Claude 實作與工程實踐（非研究） |
 | Anthropic News | https://www.anthropic.com/news | 僅取產品 / 工具 / Claude Code 公告（過濾掉純研究與模型發布） |
 | Google DeepMind Blog | https://deepmind.google/discover/blog | 僅取產品 / 開發者工具（過濾掉純研究與模型發布） |
+| Builder.io Blog | https://www.builder.io/blog | 前端（React / Next / Qwik）/ AI 開發工具（Visual Copilot 等） |
 
 #### 每週來源（**僅週六或週日執行時**才納入；平日跳過）
 
