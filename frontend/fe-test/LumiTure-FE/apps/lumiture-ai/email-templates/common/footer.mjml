@@ -1,0 +1,30 @@
+<mj-section padding="20px 0">
+  <mj-column>
+    <mj-text font-size="14px" padding-bottom="32px" align="center" line-height="1.75">
+      If you have any questions, please contact us at
+      <a
+        href="https://feedback.lumiture.ai"
+        style="color: #0b6dd7; font-weight: 700"
+        target="_blank"
+        >feedback form</a
+      >.</mj-text
+    >
+    <mj-text align="center" font-size="14px" line-height="1.75">Thank you,</mj-text>
+    <mj-text
+      font-weight="700"
+      line-height="1.75"
+      font-size="14px"
+      padding-bottom="30px"
+      align="center"
+      >LumiTure.ai Team</mj-text
+    >
+    <mj-image
+      width="60px"
+      padding-bottom="18px"
+      src="http://cdn.mcauto-images-production.sendgrid.net/ff6786561925730a/4183c97b-f15c-4e16-a4db-d29ba5f14938/121x87.png"
+    ></mj-image>
+    <mj-text font-size="14px" align="center" color="#676767" line-height="1.75"
+      >Copyright © 2025 LumiTure.ai, Inc. All rights reserved.</mj-text
+    >
+  </mj-column>
+</mj-section>

@@ -1,0 +1,32 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@app/*": ["./src/app/*"],
+      "@components/*": ["./src/components/*"],
+      "@constants": ["./src/constants/index.ts"],
+      "@features": ["./src/features/index.ts"],
+      "@hooks": ["./src/hooks/index.ts"],
+      "@hooks-api": ["./src/hooks-api/index.ts"],
+      "@hooks-ws": ["./src/hooks-ws/index.ts"],
+      "@lumiture-ui": ["../../libs/lumiture-ui/src/index.ts"],
+      "@lumiture-ui/SvgIcon": ["../../libs/lumiture-ui/src/SvgIcon/index.ts"],
+      "@lumiture-ui/theme": ["../../libs/lumiture-ui/src/theme/index.ts"],
+      "@shared/hooks": ["../../libs/hooks/src/index.ts"],
+      "@shared/types": ["../../libs/types/src/index.ts"],
+      "@shared/utils": ["../../libs/utils/src/index.ts"],
+      "@styles/*": ["./src/styles/*"],
+      "@utils": ["./src/utils/index.ts"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    // 以下兩行由 next dev 啟動時自動加入，請勿刪除，否則每次啟動都會重新寫入
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": ["node_modules", ".next", "dist"]
+}

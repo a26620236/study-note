@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "esModuleInterop": true,
+    "incremental": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ES2020",
+    "types": ["vitest/globals"],
+    "paths": {
+      "@shared/utils": ["./libs/utils/src/index.ts"],
+      "@shared/types": ["./libs/types/src/index.ts"],
+      "@shared/hooks": ["./libs/hooks/src/index.ts"],
+      "@lumiture-ui": ["./libs/lumiture-ui/src/index.ts"],
+      "@lumiture-ui/theme": ["./libs/lumiture-ui/src/theme/index.ts"],
+      "@lumiture-ui/SvgIcon": ["./libs/lumiture-ui/src/SvgIcon/index.ts"]
+    }
+  }
+}

@@ -1,0 +1,123 @@
+# LumiTure 專案開發規範
+
+## 專案概述
+
+這是一個 React + TypeScript 的前端專案。
+
+## 程式碼風格規範
+
+### TypeScript
+
+- 使用嚴格的型別檢查
+- 優先使用 `interface` 而非 `type`（除非需要 union types）
+- 避免使用 `any`，改用 `unknown` 或具體型別
+- 使用 enum 來定義狀態常數
+
+### React 組件
+
+- 使用函數式組件和 Hooks
+- 組件命名使用 PascalCase
+- Props 介面命名格式：`{ComponentName}Props`
+
+### 程式碼邏輯
+
+- **優先使用 Early Return**：避免深層巢狀，提早返回以提高可讀性
+- 將錯誤處理、邊界條件放在函數開頭
+- 範例：
+
+  ```typescript
+  // ✅ 好的寫法
+  function processData(data: Data | null) {
+    if (!data) return null;
+    if (data.isEmpty) return [];
+
+    return data.items.map((item) => transform(item));
+  }
+
+  // ❌ 避免的寫法
+  function processData(data: Data | null) {
+    if (data) {
+      if (!data.isEmpty) {
+        return data.items.map((item) => transform(item));
+      } else {
+        return [];
+      }
+    } else {
+      return null;
+    }
+  }
+  ```
+
+### 命名規範
+
+- 檔案名稱：camelCase（如 `useWebSocket.ts`）
+- 組件檔案：PascalCase（如 `AIAnalysis.tsx`）
+- 常數：UPPER_SNAKE_CASE
+- 函數/變數：camelCase
+- 私有方法：前綴 `_`（非必要）
+
+### Import
+
+- **禁止使用 `React.xxx` 存取型別或元件**，應直接具名 import
+  - ✅ `import type { ReactNode } from 'react'`
+  - ❌ `React.ReactNode`
+
+### 測試
+
+- 為組件添加 `data-testid` 屬性以便測試
+- 測試檔案命名：`*.test.ts` 或 `*.test.tsx`
+
+### Git Commit 規範
+
+- 使用 conventional commits 格式
+- 格式：`<type>: <description> #<branch-name>`
+- 使用當前分支名稱作為 ticket-id，格式為 `#<branch-name>`
+- 範例：當前分支為 `LT-2166` 時，commit 訊息為 `feat: add WebSocket reconnection logic #LT-2166`
+- Type 慣例：
+  | Type | 說明 |
+  |------|------|
+  | `feat` | 新增或修改功能（feature） |
+  | `fix` | 修補 bug（bug fix） |
+  | `docs` | 文件（documentation） |
+  | `style` | 格式，不影響程式碼運行的變動，例如：white-space, formatting, missing semi colons |
+  | `refactor` | 重構，不是新增功能，也非修補 bug 的程式碼變動 |
+  | `perf` | 改善效能（improves performance） |
+  | `test` | 增加測試（when adding missing tests） |
+  | `chore` | maintain，不影響程式碼運行，建構程序或輔助工具的變動，例如修改 config、Grunt Task 任務管理工具 |
+  | `revert` | 撤銷回覆先前的 commit，例如：`revert: type(scope): subject` |
+
+### 語言
+
+- 使用繁體中文回答（除非程式碼註解或文件需要英文）
+- 技術術語可保持英文
+
+### 程式碼修改
+
+- 優先使用 Edit 工具修改現有檔案
+- 避免不必要的重構
+- 保持現有的程式碼風格一致性
+- 修改前先閱讀相關檔案
+
+### 任務處理
+
+- 使用 TodoWrite 工具追蹤複雜任務
+- 完成每個小任務後立即標記為完成
+- 不要批量標記多個任務
+
+### 狀態管理
+
+- 檢查專案中是否已有類似的狀態管理模式
+- 保持一致的狀態更新方式
+
+### 效能考量
+
+- 避免不必要的 re-render
+- 適當使用 useMemo 和 useCallback
+
+## 禁止行為
+
+- 不要創建不必要的新檔案
+- 不要過度設計或添加未要求的功能
+- 不要在未閱讀檔案前就建議修改
+- 不要使用 `any` 型別
+- 不要忽略 TypeScript 錯誤

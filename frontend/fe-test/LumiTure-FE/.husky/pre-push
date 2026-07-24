@@ -1,0 +1,41 @@
+# 執行 Prettier 格式化
+echo "🎨 Running Prettier on staged files..."
+pnpm format:all
+
+# 如果 Prettier 失敗，停止推送
+if [ $? -ne 0 ]; then
+  echo "❌ Prettier failed. Please fix the formatting issues before pushing."
+  exit 1
+fi
+
+# TypeScript 型別檢查
+echo "🔍 Running TypeScript type check..."
+pnpm type-check:all
+
+# 如果型別檢查失敗，停止推送
+if [ $? -ne 0 ]; then
+  echo "❌ TypeScript type check failed. Please fix the type errors before pushing."
+  exit 1
+fi
+
+# 執行 ESLint 檢查（將警告視為錯誤）
+echo "🔧 Running ESLint check on all files..."
+pnpm lint:all
+
+# 如果 ESLint 失敗（包含警告），停止推送
+if [ $? -ne 0 ]; then
+  echo "❌ ESLint failed. Please fix the lint errors and warnings before pushing."
+  exit 1
+fi
+
+# 執行測試
+echo "🧪 Running tests..."
+pnpm test-ci:all
+
+# 如果測試失敗，停止推送
+if [ $? -ne 0 ]; then
+  echo "❌ Tests failed. Please fix the failing tests before pushing."
+  exit 1
+fi
+
+echo "✅ All checks passed! Ready to push."

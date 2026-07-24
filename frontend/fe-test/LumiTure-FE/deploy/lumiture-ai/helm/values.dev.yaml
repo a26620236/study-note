@@ -1,0 +1,40 @@
+namespace: frontend
+
+environment:
+  name: dev
+
+website:
+  replicasCount: 1
+  image:
+    repository: asia-east1-docker.pkg.dev/tw-rd-app-finops-dev/lumiture-dev/lumiture-frontend
+    tag: dev
+    pullPolicy: Always
+  workingDir: /app
+  resources:
+    requests:
+      cpu: 150m
+      memory: 500Mi
+    # TODO: observe
+    # limits:
+    #   cpu: 100m
+    #   memory: 2000Mi
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 3000
+  nodeSelector:
+    cloud.google.com/gke-nodepool: dev-pool
+  autoscaling:
+    enabled: false
+  livenessPath: /healthz
+  readinessPath: /healthz
+
+ingress:
+  enabled: true
+  hosts:
+    - fe-dev.lumiture.ai
+  staticIpName: lumiture-fe-dev-ip
+
+iap:
+  enabled: true
+  secretName: iap-lumiture-fe-dev

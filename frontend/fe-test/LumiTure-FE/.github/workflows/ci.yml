@@ -1,0 +1,57 @@
+name: Type Check, Lint & Test
+
+on:
+  pull_request:
+
+jobs:
+  check:
+    name: Type Check, Lint & Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        run: pnpm type-check:all
+
+      - name: Lint
+        run: pnpm lint:all
+
+      - name: Test with Coverage
+        run: pnpm test-ci:all
+
+      # 將所有 apps/*/coverage 合併到 root coverage/，未來新增 app 時不需修改此 step。
+      - name: Merge coverage from all projects
+        if: always()
+        run: |
+          mkdir -p .nyc_output coverage
+          for file in apps/*/coverage/coverage-final.json; do
+            [ -f "$file" ] || continue
+            proj=$(basename "$(dirname "$(dirname "$file")")")
+            cp "$file" ".nyc_output/${proj}-coverage.json"
+          done
+          pnpm dlx nyc report \
+            --reporter=json \
+            --reporter=json-summary \
+            --report-dir=coverage
+
+      - name: Coverage Report
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          json-summary-path: coverage/coverage-summary.json
+          json-final-path: coverage/coverage-final.json

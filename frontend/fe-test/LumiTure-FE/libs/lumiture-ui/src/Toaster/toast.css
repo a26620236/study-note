@@ -1,0 +1,72 @@
+:root {
+  --grey600: #757575; /* mui: grey[600] */
+  --errorMain: #bf302e; /* mui: error.main */
+  --warningMain: #ec6f09; /* mui: warning.main */
+  --infoMain: #0b6dd7; /* mui: info.main */
+  --successMain: #008f88; /* mui: success.main */
+}
+
+.toast-container {
+  width: 400px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  column-gap: 8px;
+  padding: 8px 16px;
+  box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* This is for custom toast */
+.toast-container > [data-content=''] {
+  width: 100%;
+}
+
+/* This is for custom toast */
+.toast-title {
+  width: 100%;
+}
+
+/* 摺疊時隱藏超出的內容 */
+.toast-container[data-expanded='false'] {
+  overflow: hidden;
+}
+
+/* 從第二個 toast 開始 (data-index >= 1)，摺疊時隱藏內容 */
+[data-sonner-toast][data-expanded='false']:not([data-index='0']) .toast-description,
+[data-sonner-toast][data-expanded='false']:not([data-index='0']) .toast-title,
+[data-sonner-toast][data-expanded='false']:not([data-index='0']) .toast-icon {
+  transition: visibility 0.2s ease;
+  visibility: hidden;
+}
+
+.toast-description {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 24.5px;
+  font-style: normal;
+  color: white;
+}
+
+.toast-icon {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.toast-info {
+  background-color: var(--infoMain);
+}
+
+.toast-success {
+  background-color: var(--successMain);
+}
+
+.toast-warning {
+  background-color: var(--warningMain);
+}
+
+.toast-error {
+  background-color: var(--errorMain);
+}

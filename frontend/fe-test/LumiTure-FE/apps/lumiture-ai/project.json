@@ -1,0 +1,16 @@
+{
+  "name": "lumiture-ai",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "targets": {
+    "typecheck": {
+      "command": "tsc --noEmit",
+      "options": { "cwd": "apps/lumiture-ai" },
+      "cache": true,
+      "inputs": ["default", "^default"]
+    },
+    "check": {
+      "dependsOn": ["typecheck", "lint"],
+      "cache": false
+    }
+  }
+}

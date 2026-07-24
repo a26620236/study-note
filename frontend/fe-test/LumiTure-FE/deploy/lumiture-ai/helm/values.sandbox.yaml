@@ -1,0 +1,36 @@
+namespace: sandbox
+
+environment:
+  name: sandbox
+
+website:
+  replicasCount: 1
+  image:
+    repository: asia-east1-docker.pkg.dev/tw-rd-app-finops-dev/lumiture-sandbox/lumiture-frontend
+    tag: sandbox
+    pullPolicy: Always
+  workingDir: /app
+  resources:
+    requests:
+      cpu: 150m
+      memory: 500Mi
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 3000
+  nodeSelector:
+    cloud.google.com/gke-nodepool: dev-pool
+  autoscaling:
+    enabled: false
+  livenessPath: /healthz
+  readinessPath: /healthz
+
+ingress:
+  enabled: true
+  hosts:
+    - sandbox.lumiture.ai
+  staticIpName: lumiture-fe-sandbox-ip
+
+iap:
+  enabled: false
+  secretName: iap-lumiture-fe-sandbox

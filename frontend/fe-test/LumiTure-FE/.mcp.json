@@ -1,0 +1,29 @@
+{
+  "mcpServers": {
+    "next-devtools": {
+      "_comment": "https://github.com/vercel/next-devtools-mcp",
+      "command": "npx",
+      "args": ["-y", "next-devtools-mcp@latest"]
+    },
+    "mui-mcp": {
+      "_comment": "https://mui.com/material-ui/getting-started/mcp/",
+      "command": "npx",
+      "args": ["-y", "@mui/mcp@latest"]
+    },
+    "zod": {
+      "_comment": "https://zod.dev/",
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://mcp.inkeep.com/zod/mcp"]
+    },
+    "echarts": {
+      "_comment": "https://github.com/hustcc/mcp-echarts",
+      "command": "npx",
+      "args": ["-y", "mcp-echarts"]
+    },
+    "tanstack": {
+      "_comment": "https://gitmcp.io/TanStack/query",
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://gitmcp.io/TanStack/query"]
+    }
+  }
+}

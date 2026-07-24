@@ -1,0 +1,39 @@
+namespace: frontend
+
+environment:
+  name: prod
+
+website:
+  replicasCount: 3
+  image:
+    repository: asia-southeast1-docker.pkg.dev/tw-rd-app-finops-prod/lumiture-prod/lumiture-frontend
+    tag: prod
+    pullPolicy: Always
+  workingDir: /app
+  resources:
+    limits:
+      cpu: 300m
+      memory: 800Mi
+    requests:
+      cpu: 150m
+      memory: 500Mi
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 3000
+  nodeSelector:
+    cloud.google.com/gke-nodepool: prod-pool
+  autoscaling:
+    enabled: false
+  livenessPath: /healthz
+  readinessPath: /healthz
+
+ingress:
+  enabled: true
+  hosts:
+    - app.lumiture.ai
+    - console.lumiture.ai
+  staticIpName: lumiture-fe-prod-ip
+
+iap:
+  enabled: false

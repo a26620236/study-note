@@ -1,0 +1,165 @@
+name: PR Automation
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  slack-notify:
+    if: github.event.action == 'opened'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Slack notification
+        uses: actions/github-script@v7
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const author = pr.user.login;
+            const title = pr.title;
+            const url = pr.html_url;
+
+            const payload = {
+              blocks: [
+                {
+                  type: 'header',
+                  text: {
+                    type: 'plain_text',
+                    text: '🔀 New Pull Request',
+                  },
+                },
+                {
+                  type: 'section',
+                  text: {
+                    type: 'mrkdwn',
+                    text: `*PR Title:* <${url}|${title}>\n*Author:* ${author}`,
+                  },
+                },
+              ],
+            };
+
+            const res = await fetch(process.env.SLACK_WEBHOOK_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+            });
+
+            if (!res.ok) {
+              const text = await res.text();
+              core.setFailed(`Slack notification failed: ${res.status} ${text}`);
+            } else {
+              console.log('Slack notification sent successfully');
+            }
+
+  assign-and-review:
+    if: github.event.action == 'opened' || github.event.action == 'reopened'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add assignees and reviewers
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const pr = context.payload.pull_request;
+            const prNumber = pr.number;
+            const author = pr.user.login;
+
+            const feReviewers = ['zackweng-cm', 'zonghan0323', 'Cloudy-Eden'];
+
+            // Add assignee — skip bot-authored PRs (GitHub blocks assigning agents/bots
+            // via app tokens); reviewers are still requested below.
+            if (pr.user.type === 'Bot') {
+              console.log(`Skipping assignee for bot author ${author}`);
+            } else {
+              await github.rest.issues.addAssignees({
+                owner,
+                repo,
+                issue_number: prNumber,
+                assignees: [author],
+              });
+              console.log(`Assigned ${author} to PR #${prNumber}`);
+            }
+
+            // Add reviewers (exclude PR author)
+            const reviewers = feReviewers.filter(r => r !== author);
+
+            if (reviewers.length > 0) {
+              await github.rest.pulls.requestReviewers({
+                owner,
+                repo,
+                pull_number: prNumber,
+                reviewers,
+              });
+              console.log(`Requested reviewers: ${reviewers.join(', ')}`);
+            } else {
+              console.log('No reviewers to assign');
+            }
+
+  notion-link:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Link Notion tickets to PR description
+        uses: actions/github-script@v7
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATA_SOURCE_ID: ${{ secrets.NOTION_DATA_SOURCE_ID }}
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const prNumber = context.payload.pull_request.number;
+            const branch = context.payload.pull_request.head.ref;
+
+            // Step 1: Extract ticket IDs from commits and branch name
+            const commits = await github.paginate(github.rest.pulls.listCommits, { owner, repo, pull_number: prNumber, per_page: 100 });
+            const messages = commits.map(c => c.commit.message).join('\n');
+            const combined = `${messages}\n${branch}`;
+            const ids = [...new Set(combined.match(/lt-\d+/gi)?.map(id => id.toUpperCase()) ?? [])];
+
+            if (ids.length === 0) {
+              console.log('No ticket IDs found');
+              return;
+            }
+            console.log('Ticket IDs:', ids);
+
+            // Step 2: Query Notion for each ticket
+            const links = [];
+            for (const ticketId of ids) {
+              const res = await fetch(`https://api.notion.com/v1/data_sources/${process.env.NOTION_DATA_SOURCE_ID}/query`, {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${process.env.NOTION_TOKEN}`,
+                  'Notion-Version': '2025-09-03',
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ filter: { property: 'id', formula: { string: { equals: ticketId } } } }),
+              });
+              const data = await res.json();
+              const page = data.results?.[0];
+
+              if (page?.url) {
+                const title = page.properties?.backlogs?.title?.[0]?.plain_text ?? '';
+                links.push(`[${ticketId} ${title}](${page.url})`);
+              } else {
+                links.push(`${ticketId} (not found in Notion)`);
+              }
+            }
+            console.log('Links:', links);
+
+            // Step 3: Update PR description
+            const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: prNumber });
+            const body = (pr.body ?? '').replace(/\r/g, '');
+            const newBody = body.replace(
+              /(### ⭐️ Notion Ticket\n)[\s\S]*?(?=\n### ⭐️)/,
+              `$1\n${links.join('\n')}`
+            );
+
+            if (newBody !== body) {
+              await github.rest.pulls.update({ owner, repo, pull_number: prNumber, body: newBody });
+              console.log('PR description updated');
+            } else {
+              console.log('No changes to PR description');
+            }

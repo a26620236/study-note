@@ -1,0 +1,9 @@
+{
+  "name": "lumiture-ai-e2e",
+  "private": true,
+  "nx": {
+    "implicitDependencies": [
+      "lumiture-ai"
+    ]
+  }
+}

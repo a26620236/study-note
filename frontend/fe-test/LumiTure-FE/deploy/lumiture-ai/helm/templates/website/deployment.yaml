@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "app.website.name" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "app.website.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.website.autoscaling.enabled }}
+  replicas: {{ .Values.website.replicasCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "app.website.labels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "app.website.labels" . | nindent 8  }}
+      annotations:
+        rollme: {{ randAlphaNum 5 | quote }}
+    spec:
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      {{- with .Values.website.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ include "app.website.name" . }}
+          image: "{{ .Values.website.image.repository }}:{{ .Values.website.image.tag }}"
+          imagePullPolicy: {{ .Values.website.image.pullPolicy }}
+          # command: ["npm", "run", "start"]
+          workingDir: /app
+          resources:
+            {{- toYaml .Values.website.resources | nindent 12 }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.website.service.targetPort }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.website.livenessPath }}
+              port: {{ .Values.website.service.targetPort }}
+            initialDelaySeconds: 60
+            timeoutSeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.website.readinessPath }}
+              port: {{ .Values.website.service.targetPort }}
+            initialDelaySeconds: 60
+            timeoutSeconds: 30
+            periodSeconds: 30
+          terminationMessagePath: /dev/termination-log

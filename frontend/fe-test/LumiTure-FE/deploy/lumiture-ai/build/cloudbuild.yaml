@@ -1,0 +1,82 @@
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+steps:
+  # 建置容器映像
+  - name: 'gcr.io/cloud-builders/docker'
+    id: build_image
+    args:
+      [
+        'build',
+        '--build-arg',
+        '_NODE_ENV=${_NODE_ENV}',
+        '--build-arg',
+        '_NEXT_PUBLIC_NODE_ENV_NAME=${_NEXT_PUBLIC_NODE_ENV_NAME}',
+        '--build-arg',
+        '_NEXTAUTH_SECRET=${_NEXTAUTH_SECRET}',
+        '--build-arg',
+        '_NEXTAUTH_URL=${_NEXTAUTH_URL}',
+        '--build-arg',
+        '_GTAG_ID=${_GTAG_ID}',
+        '--build-arg',
+        '_API_BASE_URL=${_API_BASE_URL}',
+        '--build-arg',
+        '_NEXT_PUBLIC_API_BASE_URL=${_NEXT_PUBLIC_API_BASE_URL}',
+        '--build-arg',
+        '_NEXT_PUBLIC_CLOUD_STORAGE_BUCKET_NAME=${_NEXT_PUBLIC_CLOUD_STORAGE_BUCKET_NAME}',
+        '--build-arg',
+        '_NEXT_PUBLIC_WS_BASE_URL=${_NEXT_PUBLIC_WS_BASE_URL}',
+        '--build-arg',
+        '_SENTRY_AUTH_TOKEN=${_SENTRY_AUTH_TOKEN}',
+        '--build-arg',
+        '_NEXT_PUBLIC_SENTRY_DSN=${_NEXT_PUBLIC_SENTRY_DSN}',
+        '--build-arg',
+        '_GOOGLE_CLIENT_ID=${_GOOGLE_CLIENT_ID}',
+        '--build-arg',
+        '_GOOGLE_CLIENT_SECRET=${_GOOGLE_CLIENT_SECRET}',
+        '--build-arg',
+        '_MICROSOFT_CLIENT_ID=${_MICROSOFT_CLIENT_ID}',
+        '--build-arg',
+        '_MICROSOFT_CLIENT_SECRET=${_MICROSOFT_CLIENT_SECRET}',
+        '--build-arg',
+        '_GITHUB_CLIENT_ID=${_GITHUB_CLIENT_ID}',
+        '--build-arg',
+        '_GITHUB_CLIENT_SECRET=${_GITHUB_CLIENT_SECRET}',
+        '-t',
+        '$_GAR_LOCATION/$PROJECT_ID/lumiture-$_NEXT_PUBLIC_NODE_ENV_NAME/lumiture-frontend:$_NEXT_PUBLIC_NODE_ENV_NAME',
+        '-f',
+        '${_DOCKERFILE}',
+        '.',
+      ]
+
+  # 推送容器映像到 Artifact Registry
+  - id: push_image
+    name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'push',
+        '$_GAR_LOCATION/$PROJECT_ID/lumiture-$_NEXT_PUBLIC_NODE_ENV_NAME/lumiture-frontend:$_NEXT_PUBLIC_NODE_ENV_NAME',
+      ]
+
+  - id: pull_helm_builder
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['pull', '${_HELM_BUILDER}']
+    waitFor: ['-']
+
+  - id: helm_deploy
+    name: '${_HELM_BUILDER}'
+    args:
+      [
+        'upgrade',
+        '--install',
+        '${_RELEASE_NAME}',
+        '${_CHART_PATH}',
+        '-f',
+        '${_CHART_PATH}/${_VALUE_FILES}',
+      ]
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=${_CLOUDSDK_COMPUTE_ZONE}'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLOUDSDK_CONTAINER_CLUSTER}'
+    waitFor: ['push_image', 'pull_helm_builder']
+
+tags: ['front-end', '${_NEXT_PUBLIC_NODE_ENV_NAME}']

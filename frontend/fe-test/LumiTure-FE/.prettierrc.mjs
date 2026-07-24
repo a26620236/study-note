@@ -1,0 +1,32 @@
+export default {
+  printWidth: 100,
+  semi: true,
+  singleQuote: true,
+  jsxSingleQuote: false,
+  bracketSpacing: true,
+  bracketSameLine: false,
+  arrowParens: 'always',
+  trailingComma: 'es5',
+  endOfLine: 'lf',
+  tabWidth: 2,
+  useTabs: false,
+  proseWrap: 'preserve',
+  htmlWhitespaceSensitivity: 'css',
+  quoteProps: 'as-needed',
+  embeddedLanguageFormatting: 'auto',
+};
+
+export const externalImportOrder = [
+  '^react$',
+  '^react-dom$',
+  '^next($|/)',
+  '',
+  '<THIRD_PARTY_MODULES>',
+  '',
+  '^@lumiture-ui$',
+  '^@lumiture-ui/theme$',
+  '^@lumiture-ui/SvgIcon$',
+  '^@shared/types$',
+  '^@shared/utils$',
+  '^@shared/hooks$',
+];

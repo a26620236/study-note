@@ -1,0 +1,17 @@
+# Add files here to ignore them from prettier formatting
+# Note: Prettier also reads ./.gitignore by default, so entries already in
+# .gitignore (dist, coverage, .nx/cache, .nx/workspace-data, node_modules,
+# .next, etc.) don't need to be duplicated here.
+
+# Tooling / non-source directories
+.claude/
+.vscode/
+deploy/
+email-templates/
+
+# Lock files
+pnpm-lock.yaml
+
+# Config files (managed manually)
+.prettierrc.mjs
+tsconfig*.json

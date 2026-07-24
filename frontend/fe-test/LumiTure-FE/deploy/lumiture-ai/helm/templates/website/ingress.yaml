@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "app.website.name" . }}-ingress
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "app.website.labels" . | nindent 4 }}
+  annotations:
+    kubernetes.io/ingress.class: gce
+    kubernetes.io/ingress.allow-http: "true"
+    {{- if .Values.ingress.staticIpName }}
+    kubernetes.io/ingress.global-static-ip-name: "{{ .Values.ingress.staticIpName }}"
+    {{- end }}
+    networking.gke.io/managed-certificates: {{ include "app.website.name" . }}-cert
+    cloud.google.com/backend-config: '{"default": "{{ include "app.website.name" . }}-iap-config"}'
+spec:
+  rules:
+  {{- range .Values.ingress.hosts }}
+  - host: "{{ . }}"
+    http:
+      paths:
+      - path: /*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: {{ include "app.website.name" $ }}
+            port:
+              number: {{ $.Values.website.service.port }}
+  {{- end }}
