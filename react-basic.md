@@ -453,11 +453,12 @@ const element2 = <Welcome />;
 
 
 
-
-
 ## React 畫面更新的核心機制：一律重繪渲染策略
 
+
+
 ### 單向資料流 & DOM 渲染策略
+
 在繼續深談 React 管理並更新畫面的策略與機制之前，我們先來探究一下關於單向資料流的概念，以及在尚未使用前端框架時實現單向資料流的 DOM 渲染策略，來幫助我們了解「沒有使用前端框架來管理畫面時，會遇到的問題與需求」，進而更好地理解為什麼 React 可以幫助我們解決這些問題。
 
 單向資料流
@@ -470,8 +471,6 @@ const element2 = <Welcome />;
 所謂「單向」的意思，就是只有資料變化時才能導致畫面更新，畫面無法在原始資料發生變化以外的情況隨意改變。且畫面本身也不允許以任何原因，主動逆向去直接修改原始資料。
 
 由於這是一個單向的流程，因此畫面不會因為資料變化以外的任何原因而隨意改變，這樣就可以保證將 UI 產生的主要變因限縮在「資料」上，並且當資料更新時對應綁定的畫面就會自動發生變化，進而提升前端應用程式的可靠性與可維護性。
-
-
 
 ### 從「一律重繪」的策略講起
 
@@ -534,7 +533,7 @@ props 是**由外部傳進來**的資料；但很多時候，component 需要一
 1. **修改普通變數，不會通知 React 要重繪畫面**。React 採用的是一律重繪的渲染策略，但它必須先「知道資料變了」才會啟動重繪流程；直接對普通變數賦值，React 完全無從得知，畫面自然不會有任何反應。
 2. **re-render 時，component function 會被整個重新執行一次**。function 裡宣告的區域變數會在每次執行時重新初始化，也就是**被重置回初始值**——上一次的修改根本留不住。
 
-所以 state 需要一個特殊的存放與更新機制，讓資料「存活在 component function 之外、由 React 代為保管」，並且在更新時能通知 React。這個機制就是 **`useState`**：
+所以 state 需要一個特殊的存放與更新機制，讓資料「存活在 component function 之外、由 React 代為保管」，並且在更新時能通知 React。這個機制就是 `useState`：
 
 ```
 const [count, setCount] = useState(0);
@@ -557,13 +556,16 @@ const [count, setCount] = useState(0);
 ```
 import { useState } from 'react';
 
-function Counter() {
+function Counter(props) {
   const [count, setCount] = useState(0);
 
   return (
-    <button onClick={() => setCount(count + 1)}>
-      count: {count}
-    </button>
+    <div>
+      <h3>{props.name}</h3>
+      <button onClick={() => setCount(count + 1)}>
+        count: {count}
+      </button>
+    </div>
   );
 }
 ```
@@ -573,9 +575,11 @@ function Counter() {
 1. **initial render（首次渲染）**：React 呼叫 `Counter` 這個 component function，`useState(0)` 回傳的 `count` 是初始值 `0`，function 回傳一份「按鈕上顯示 count: 0」的 React elements，React 據此產生真實 DOM，畫面出現按鈕。
 2. 使用者**點擊按鈕**，觸發 `onClick`，呼叫了 `setCount(count + 1)`——此時 `count` 的值是 `0`，所以等同於呼叫 `setCount(1)`。
 3. `setCount` 將 React 內部保管的 `count` 資料更新為 `1`，並**通知 React：資料變了，該重繪了**。
-4. React **以新的資料重新執行一次 `Counter` 這個 component function**——這一步就是 **re-render**。注意：這次執行時 `useState` 回傳的 `count` 是 `1` 而不是初始值 `0`，因為這份資料是由 React 保管在 component function 之外的，不會因為 function 重新執行而被重置。
+4. React **以新的資料重新執行一次** `Counter` **這個 component function**——這一步就是 **re-render**。注意：這次執行時 `useState` 回傳的 `count` 是 `1` 而不是初始值 `0`，因為這份資料是由 React 保管在 component function 之外的，不會因為 function 重新執行而被重置。
 5. function 回傳**新版的 React elements**：一份「按鈕上顯示 count: 1」的畫面描述。
 6. React 將新舊兩份 React elements（也就是新舊 Virtual DOM Tree）進行比較——也就是前面介紹過的 **Reconciliation** 流程——發現差異只有按鈕裡的文字從 `0` 變成 `1`，於是**只更新那一小塊真實 DOM**，完成畫面更新。
+
+
 
 #### 回頭再讀一次那句定義
 
@@ -584,7 +588,3 @@ function Counter() {
 > 「**以新的資料（props 或 state）重新再執行一次 component function，並產生新版的 React elements**」
 
 拆開來讀：「新的資料」指的是外部傳入的 **props** 或 component 自己保管的 **state** 有了新的值；「重新再執行一次 component function」指的是 React 再呼叫一次你寫的那個畫面藍圖 function；「產生新版的 React elements」則是這次執行的回傳結果——一份描述最新畫面的 Virtual DOM，接著交給前面學過的新舊比較流程，把差異最小化地更新到真實 DOM。你會發現，這句話正是「一律重繪」策略落實在程式碼層面的具體樣貌：**資料變了，就重新執行藍圖、重新產生整份畫面描述，剩下的效能問題交給 Virtual DOM 的比較機制解決**。
-
-
-
-
